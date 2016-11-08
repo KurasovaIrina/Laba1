@@ -1,0 +1,26 @@
+import requests
+import re
+site = 'http://www.mosigra.ru'
+difemail = []
+difurl = []
+n = 0
+while n < 10 :
+    s = requests.get(site)
+    s = s.text    
+    link1 = re.finditer(r'(href=")(\/[\w.\/]+)', s)        
+    for j in link1:
+        if site + j.group(2)not in difurl:   
+            difurl.append(site + j.group(2))
+    link = re.finditer(r'(href=")(http:..\w+[\w]+:?\.\w+.*)(">)', s)
+    for i in link:
+        if i.group(2)not in difurl:
+            difurl.append(i.group(2))
+    print (difurl[n])
+    email = re.finditer(r'(?:mailto:)?(\w+@[\w]+(:?\.\w+)*)\b', s)
+    for k in email:
+        if k.group(1) not in difemail:
+            difemail.append(k.group(1))
+    site = difurl[n]
+    n = n+1
+for b in range(len(difemail)):
+    print(difemail[b])
