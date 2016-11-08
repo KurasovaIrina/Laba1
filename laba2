@@ -1,0 +1,15 @@
+import requests
+import re
+f = open('access.log', 'r')
+ip = re.finditer('^[0-9.]+[0-9.]+[0-9.]+[0-9]', f.read(),re.M)
+difip = []
+gr = []
+for line in ip:
+    if line.group(0) not in difip:
+        difip.append(line.group(0))
+for groupip in sorted(difip):
+    print (groupip)
+
+
+    
+
