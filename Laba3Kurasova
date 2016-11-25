@@ -4,7 +4,7 @@ r = requests.get('https://api.meetup.com/2/open_events?&sign=true&lat=42.21&coun
 print('finish!')
 result = r.json()
 file = open("events.html", "w+", encoding='utf-8')
-file.write("<style type='text/css'> .content  </style>")
+file.write("<style type='text/css'> .content div {background: repeat-y #fc0;} body {background-color:#66cc66;} </style>")
 now = datetime.date.today()
 tdel = now + datetime.timedelta(days=7)
 file.write("<h2 align='center'>" + "On this week:" + "</h2>")
