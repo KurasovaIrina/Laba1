@@ -1,0 +1,30 @@
+import requests
+import datetime 
+r = requests.get('https://api.meetup.com/2/open_events?&sign=true&lat=42.21&country=us&topic=python&city=boston&state=ma&lon=-71.03&time=,1w&key=341a334479441039717c256f4369803e')
+print('finish!')
+result = r.json()
+file = open("events.html", "w+", encoding='utf-8')
+file.write("<style type='text/css'> .content  </style>")
+now = datetime.date.today()
+tdel = now + datetime.timedelta(days=7)
+file.write("<h2 align='center'>" + "On this week:" + "</h2>")
+for item in result['results']:
+  time = datetime.datetime.fromtimestamp(int(str(item['time'])[0:10]))
+  file.write("<div class='date'>" + str(time.strftime('%B  %d') + "</div>")) 
+  file.write("<div class='content'>")
+  file.write("<span>" + str(time.strftime('%H:%M') + "</span><h2 align='center'>" + str((item['group'])['name']) + "</h2>"))
+  try:
+      file.write("<div align='center'>Address: " + str((item['venue'])['address_1']) + "</div>")
+  except:
+    pass
+  try:
+    file.write("<div align='center'>Another address: " + str((item['venue'])['address_2']) + "</div>")
+  except:
+    pass
+  file.write("<div align='center'>" + str(item['name'] + "</div>"))
+  try:
+    file.write("<p>" + str(item['description']) + "</p>")
+  except:
+    pass
+  file.write("</div>")
+file.close()
