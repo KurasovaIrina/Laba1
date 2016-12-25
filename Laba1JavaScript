@@ -1,0 +1,74 @@
+var r = require('request');
+
+const URL = "http://www.mosigra.ru";
+let ParentPages = [];
+let emails = [];
+let allURL = [];
+allURL.push(URL);
+
+const RegURL = new RegExp('href="(?:(<URL>))?(?:\\.\\.)*(?:\\/?[a-zA-Z0-9%-])+\\??(?:[a-zA-Z0-9]+\\=[a-zA-Z0-9_%-]+[;&]?)*(?:\\.html|\\.htm|\\/)?"'.replace("<URL>", URL),'g');
+const RegEmail = new RegExp('[a-zA-Z0-9]+(?:[._+%-]+[a-zA-Z0-9]+)*@(?:[a-zA-Z0-9]?)+[.]((ru)|(com))','g');
+
+console.log('Please wait!');
+function Parsing() {
+	
+	if ((ParentPages.length < 15) && (allURL.length > 0)) {
+		let nowURL = allURL.pop();
+		
+		if (ParentPages.indexOf(nowURL) != -1) {
+			Parsing();
+			return;
+		}
+		
+		ParentPages.push(nowURL);
+		
+		
+		r(nowURL, function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				const allText = body;
+
+				let difMail;
+				while(difMail = RegEmail.exec(allText)) {
+					if(emails.indexOf(difMail[0]) == -1) {
+						emails.push(difMail[0]);
+					}
+				}
+				
+				let difURL;
+				let tempURL = [];
+				while(difURL = RegURL.exec(allText)) {
+					tempURL.push(difURL[0]);
+				}
+				
+				if(tempURL != null) {
+					
+					tempURL.forEach(function (difURL, i, arr) {
+						let subURL = difURL.substring(0, difURL.length - 1);
+						subURL = subURL.replace('href=\"', "")
+						let next = subURL;
+						if (subURL[0] == "/") {
+							next = URL + subURL;
+						}
+						if (allURL.indexOf(next) == -1) {
+							allURL.push(next);
+						}
+					
+					});
+				}
+
+				Parsing();
+			}
+			else {
+				console.log(error);
+			}
+		});
+	}
+	else {
+		console.log("\nDifferent Emails : ");
+		emails.forEach(function (Email, i, arr) {
+			console.log(Email);
+		});
+	}
+}
+
+Parsing();
