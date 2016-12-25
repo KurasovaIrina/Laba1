@@ -1,0 +1,26 @@
+var fs = require('fs');
+const ReIp = new RegExp('(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}', 'g');
+let group = {};
+console.log('\nStart');
+console.log('\nResults:');
+fs.readFile('access.log', {encoding: 'utf8'}, function (err, data) {
+    if (err) throw err;
+	
+	let maska = [];
+	let difIP;
+	while(difIP = ReIp.exec(data)) {
+		let allIP = difIP[0].split('.');
+		allIP.pop();
+		maska = allIP.join('.');		
+		if (!(maska in group)) group[maska] = [];		
+		if (group[maska].indexOf(difIP[0]) == -1) group[maska].push(difIP[0]);
+	};
+	
+	for (maska in group) {
+		for (difIP in group[maska]) {
+			console.log(group[maska][difIP]);
+		}
+	}
+	console.log('\nFinish');
+
+});
