@@ -1,0 +1,27 @@
+package main
+import (
+	"fmt"
+	"strconv"
+)
+
+type n struct {
+	a int
+	v string
+}
+
+
+func main() {
+	c := make(chan string);
+	t := n{a: 36, v:"token"}
+ 	go thread(1, t, c)	
+	fmt.Println(<-c)
+}
+
+func thread(i int, t n, c chan string) {
+	if (t.a == i) {
+		m := " № " + strconv.FormatInt(int64(i), 10) + ": " + t.v
+		c <- m
+	} else {
+		go thread(i+1, t, c)
+	}
+}
